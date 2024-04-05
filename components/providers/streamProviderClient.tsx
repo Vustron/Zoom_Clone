@@ -1,3 +1,4 @@
+import { tokenProvider } from '@/lib/actions/streams.actions';
 import { useUser } from '@clerk/nextjs';
 import {
 	StreamCall,
@@ -6,6 +7,7 @@ import {
 	User,
 } from '@stream-io/video-react-sdk';
 import { ReactNode, useEffect, useState } from 'react';
+import Loader from '@/components/ui/loader';
 
 const apiKey = process.env.NEXT_PUBLIC_STREAM_API_KEY;
 const userId = 'user-id';
@@ -31,9 +33,13 @@ const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
 			},
 			tokenProvider,
 		});
+
+		setVideoClient(client);
 	}, [user, isLoaded]);
 
-	return <StreamVideo client={videoClient}></StreamVideo>;
+	if (!videoClient) return <Loader />;
+
+	return <StreamVideo client={videoClient}>{children}</StreamVideo>;
 };
 
 export default StreamVideoProvider;
